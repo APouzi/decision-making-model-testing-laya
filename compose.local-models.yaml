@@ -1,0 +1,8 @@
+# Reuse downloaded weights without copying them into the image or a new volume.
+services:
+  playground:
+    volumes:
+      - type: bind
+        source: ${LAYA_MODELS_DIR:?Set LAYA_MODELS_DIR to the existing models directory}
+        target: /data/models
+        read_only: true

@@ -1,0 +1,15 @@
+.git
+.agents
+.codex
+.venv
+models
+.cache
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+**/*.log
+**/*.pid
+backend/web/*
+!backend/web/.gitkeep
+static

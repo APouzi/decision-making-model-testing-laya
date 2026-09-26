@@ -1,0 +1,14 @@
+.venv/
+.cache/
+models/
+__pycache__/
+*.pyc
+*.log
+*.pid
+frontend/node_modules/
+frontend/dist/
+backend/web/*
+!backend/web/.gitkeep
+.env
+.env.*
+!.env.example

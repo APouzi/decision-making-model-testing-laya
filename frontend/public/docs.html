@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Laya local API</title><style>body{max-width:780px;margin:50px auto;padding:0 24px;font:16px/1.6 system-ui;color:#24362e;background:#f6f8f7}code,pre{font:14px/1.6 monospace;background:#edf3ee}pre{padding:18px;overflow:auto;border-radius:10px}a{color:#28664f}</style></head>
+<body><a href="/">← Decision playground</a><h1>Laya local API</h1><p>The Go server accepts JSON and returns native Laya answers. Inference runs locally in a private Python worker.</p><ul><li><code>GET /api/health</code> — status for both models; optional <code>?model=english</code>.</li><li><code>GET /api/ready</code> — HTTP 200 when both models are warm; otherwise 503.</li><li><code>POST /api/predict</code> — structured state and named questions.</li><li><code>POST /api/decide</code> — original prompt, question, and options compatibility endpoint.</li></ul><h2>Prediction request</h2><p>Send <code>Content-Type: application/json</code>. Model defaults to <code>typed-decisions</code>; use <code>english</code> to compare.</p><pre>{
+  "model": "typed-decisions",
+  "state": {"message": "I was charged twice. Please refund me."},
+  "questions": {
+    "refund_requested": {
+      "type": "noul",
+      "instructions": "Does the customer request a refund?"
+    },
+    "department": {
+      "type": "choice",
+      "instructions": "Which team should handle this?",
+      "criteria": {"billing": "payments and refunds", "technical": "bugs"}
+    },
+    "urgency": {
+      "type": "score",
+      "instructions": "How urgent is the message?",
+      "criteria": ["low", "medium", "high"]
+    }
+  }
+}</pre><p><code>noul</code> remains P(true) in raw JSON. The UI compares yes and no, highlights the winner, and shows a tie at exactly 0.5. Custom false/true labels are respected. <code>choice</code> returns the selected option and distribution. <code>score</code> returns an expected zero-based rubric position.</p><p>Use 1–8 questions and 2–8 choice/score criteria. Invalid JSON, duplicate keys, invalid definitions, and inputs exceeding a model's token budget return 422. Requests above 256 KiB return 413; a busy model returns 429; an unavailable model returns 503. Inference times out after two minutes.</p><p>Open the request and response panel in the playground to see the full JSON with syntax highlighting.</p></body></html>

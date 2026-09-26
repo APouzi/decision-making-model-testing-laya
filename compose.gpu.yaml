@@ -1,0 +1,15 @@
+services:
+  playground:
+    build:
+      args:
+        TORCH_BACKEND: cu128
+    environment:
+      LAYA_DEVICE: cuda
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

@@ -1,0 +1,4 @@
+# Python is only the private inference worker; Go owns HTTP and validation.
+# Install torch==2.8.0 from the CPU or CUDA index before these requirements.
+laya==0.3.20
+transformers==4.57.6
