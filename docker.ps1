@@ -9,6 +9,9 @@ $env:LAYA_PORT = [string]$Port
 $composeArgs = @('compose', '-f', (Join-Path $PSScriptRoot 'compose.yaml'))
 if (-not $Cpu) { $composeArgs += @('-f', (Join-Path $PSScriptRoot 'compose.gpu.yaml')) }
 $composeArgs += @('-f', (Join-Path $PSScriptRoot 'compose.local-models.yaml'), 'up', '--build', '-d', '--wait', '--wait-timeout', '240')
-& docker @composeArgs
-if ($LASTEXITCODE -ne 0) { throw 'Docker startup failed. Inspect docker compose logs.' }
+Push-Location $PSScriptRoot
+try {
+    & docker @composeArgs
+    if ($LASTEXITCODE -ne 0) { throw 'Docker startup failed. Inspect docker compose logs.' }
+} finally { Pop-Location }
 Write-Host "Svelte + Go + Laya: http://127.0.0.1:$Port"

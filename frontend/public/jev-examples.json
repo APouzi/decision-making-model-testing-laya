@@ -1,0 +1,63 @@
+{
+  "incident_triage": {
+    "title": "Production incident triage",
+    "category": "Jev · routing, impact, escalation",
+    "state": {
+      "ticket": {
+        "id": "INC-4821",
+        "customer_message": "Checkout has been failing for most of our customers since about 9:10 this morning. We are seeing 500 errors on every region we tried. We have orders waiting and no workaround. Please get someone on this now.",
+        "reported_at": "09:24 local time",
+        "affected_service": "Hosted checkout",
+        "service_status": {
+          "failed_requests": "81% of checkout requests",
+          "regions_affected": "All three production regions",
+          "first_seen": "09:08 local time",
+          "workaround": "None known"
+        },
+        "recent_change": "A payment-service deployment completed at 09:05 local time.",
+        "routing_policy": "Route software failures and outages to Technical Support; payment settlement and invoice questions to Billing; plan changes and pre-sales questions to Accounts.",
+        "escalation_policy": "Page the on-call engineer for a production outage affecting multiple regions or most customers when no workaround is available. Do not page for an isolated user issue or a question that has a working workaround."
+      }
+    },
+    "questions": {
+      "team": {
+        "type": "choice",
+        "instructions": "Which team should own this ticket under the routing policy?",
+        "criteria": {
+          "technical_support": "Software failures, integrations, and service outages",
+          "billing": "Payment settlement, invoices, and refunds",
+          "accounts": "Plan changes, account setup, and pre-sales questions"
+        }
+      },
+      "customer_impact": {
+        "type": "score",
+        "instructions": "How much customer impact does the incident report describe?",
+        "criteria": [
+          "No customer impact is stated",
+          "One customer or an isolated request is affected",
+          "A limited group has degraded service",
+          "Most customers cannot complete a production workflow"
+        ]
+      },
+      "page_on_call": {
+        "type": "noul",
+        "instructions": "Under the escalation policy, should the on-call engineer be paged now?",
+        "criteria": {
+          "true": "A multi-region or broad production outage has no known workaround",
+          "false": "The report describes a limited issue or a working workaround"
+        }
+      },
+      "customer_frustration": {
+        "type": "score",
+        "instructions": "How frustrated does the customer sound in the message?",
+        "criteria": [
+          "Calm or neutral",
+          "Concerned but measured",
+          "Clearly frustrated and asking for urgent help",
+          "Angry or threatening to leave"
+        ]
+      }
+    },
+    "hint": "This uses one realistic incident for four focused decisions: route, impact, escalation, and tone. Jev answers them together; application code can combine the typed answers and confidence into its own workflow. Change the incident details to see which decisions move."
+  }
+}

@@ -11,6 +11,8 @@ services:
       - "127.0.0.1:${LAYA_PORT:-8765}:8765"
     environment:
       LAYA_DEVICE: cpu
+      TYPESAFE_API_KEY: ${TYPESAFE_API_KEY:-}
+      JEV_MODEL: ${JEV_MODEL:-jev-latest}
     volumes:
       - models:/data/models
     stop_grace_period: 20s

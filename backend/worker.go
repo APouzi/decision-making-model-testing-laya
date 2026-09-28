@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -53,7 +54,15 @@ func startWorker(python, root string) (*inferenceWorker, error) {
 	cmd := exec.Command(python, "-u", "-B", filepath.Join(root, "inference_worker.py"))
 	prepareProcess(cmd)
 	cmd.Dir = root
-	cmd.Env = append(os.Environ(), "PYTHONIOENCODING=utf-8", "PYTHONDONTWRITEBYTECODE=1")
+	workerEnv := make([]string, 0, len(os.Environ())+2)
+	for _, entry := range os.Environ() {
+		key, _, _ := strings.Cut(entry, "=")
+		if strings.EqualFold(key, "TYPESAFE_API_KEY") {
+			continue
+		}
+		workerEnv = append(workerEnv, entry)
+	}
+	cmd.Env = append(workerEnv, "PYTHONIOENCODING=utf-8", "PYTHONDONTWRITEBYTECODE=1")
 	cmd.Stderr = os.Stderr
 	input, err := cmd.StdinPipe()
 	if err != nil {

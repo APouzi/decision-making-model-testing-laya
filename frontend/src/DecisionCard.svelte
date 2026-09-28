@@ -17,7 +17,7 @@
 </script>
 
 <article class="answer-card" data-question={name}>
-  <div class="answer-heading"><h3 class="answer-name">{name}</h3><span class="type-tag">{answer.type}</span></div>
+  <div class="answer-heading"><h3 class="answer-name">{name}</h3><div class="answer-tags"><span class="type-tag">{answer.type}</span>{#if typeof answer.confidence === 'number'}<span class="confidence-tag">{percent(answer.confidence)} confidence</span>{/if}</div></div>
   <p class="answer-instructions">{question.instructions}</p>
   {#if answer.type === 'noul'}
     <div class="winner-heading">
@@ -25,6 +25,7 @@
       <span class="winner-badge" class:tie={tied}>{tied ? 'Tie' : '✓ Winner'}</span>
     </div>
     <p class="answer-explanation">{tied ? 'Both answers have equal support.' : 'The model selected this answer.'}</p>
+    {#if question.criteria?.true || question.criteria?.false}<p class="noul-criteria">Yes: {question.criteria.true || 'yes'} · No: {question.criteria.false || 'no'}</p>{/if}
     <div class="boolean-options" aria-label="Yes or no result">
       {#each rows as row}
         <div class="boolean-option" class:selected={winner === row.key}>

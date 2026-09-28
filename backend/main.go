@@ -99,6 +99,11 @@ func main() {
 		}
 		return
 	}
+	if err := loadDotEnv(absoluteRoot); err != nil {
+		log.Fatal(err)
+	}
+	jevModel := env("JEV_MODEL", "jev-latest")
+	jevAPIKey := os.Getenv("TYPESAFE_API_KEY")
 	ui, err := fs.Sub(embeddedUI, "web")
 	if err != nil {
 		log.Fatal(err)
@@ -152,6 +157,8 @@ func main() {
 		}
 		jsonResponse(w, 200, map[string]string{"status": "ready"})
 	})
+	mux.HandleFunc("GET /api/jev/health", jevHealthHandler(jevModel, jevAPIKey))
+	mux.HandleFunc("POST /api/jev", jevPredictionHandler(jevModel, jevAPIKey))
 	mux.HandleFunc("POST /api/predict", func(w http.ResponseWriter, r *http.Request) {
 		var request predictionRequest
 		if !readRequest(w, r, &request) {

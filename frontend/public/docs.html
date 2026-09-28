@@ -1,6 +1,58 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Laya local API</title><style>body{max-width:780px;margin:50px auto;padding:0 24px;font:16px/1.6 system-ui;color:#24362e;background:#f6f8f7}code,pre{font:14px/1.6 monospace;background:#edf3ee}pre{padding:18px;overflow:auto;border-radius:10px}a{color:#28664f}</style></head>
-<body><a href="/">← Decision playground</a><h1>Laya local API</h1><p>The Go server accepts JSON and returns native Laya answers. Inference runs locally in a private Python worker.</p><ul><li><code>GET /api/health</code> — status for both models; optional <code>?model=english</code>.</li><li><code>GET /api/ready</code> — HTTP 200 when both models are warm; otherwise 503.</li><li><code>POST /api/predict</code> — structured state and named questions.</li><li><code>POST /api/decide</code> — original prompt, question, and options compatibility endpoint.</li></ul><h2>Prediction request</h2><p>Send <code>Content-Type: application/json</code>. Model defaults to <code>typed-decisions</code>; use <code>english</code> to compare.</p><pre>{
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Decision playground API</title>
+  <style>
+    body{max-width:780px;margin:50px auto;padding:0 24px;font:16px/1.6 system-ui;color:#24362e;background:#f6f8f7}
+    code,pre{font:14px/1.6 monospace;background:#edf3ee}pre{padding:18px;overflow:auto;border-radius:10px}a{color:#28664f}
+  </style>
+</head>
+<body>
+  <a href="/">← Decision playground</a>
+  <h1>Decision playground API</h1>
+  <p>The app has two providers. Laya evaluates locally in a private Python worker. Jev uses the TypeSafe hosted API through the Go server.</p>
+  <h2>Laya</h2>
+  <ul>
+    <li><code>GET /api/health</code> — status for both models; optional <code>?model=english</code>.</li>
+    <li><code>GET /api/ready</code> — HTTP 200 when both models are warm; otherwise 503.</li>
+    <li><code>POST /api/predict</code> — structured state and named questions.</li>
+    <li><code>POST /api/decide</code> — original prompt, question, and options compatibility endpoint.</li>
+  </ul>
+  <h2>Jev</h2>
+  <p>Put your TypeSafe API key in <code>TYPESAFE_API_KEY</code> in the root <code>.env</code> file, then restart the server. <code>.env</code> is ignored by Git. The key stays on the Go server; the browser never receives it.</p>
+  <ul>
+    <li><code>GET /api/jev/health</code> — reports the configured model and whether a key is present, without exposing the key.</li>
+    <li><code>POST /api/jev</code> — sends the same state and question format to TypeSafe's <code>POST https://api.typesafe.ai/v1/systemone</code>.</li>
+  </ul>
+  <p>Jev is hosted. The state and questions you submit in the Jev tab are sent to TypeSafe. Keep credentials and sensitive information out of sample inputs. The model defaults to <code>jev-latest</code>; set <code>JEV_MODEL=jev-1.13.0</code> to pin that documented release.</p>
+  <h2>Typed request format</h2>
+  <p>Both providers accept a state and 1–8 named questions. Use <code>choice</code> for a defined set, <code>score</code> for ordered rubric levels, and <code>noul</code> for a yes/no probability. Jev evaluates each question independently against the shared state; combine those answers in your application code.</p>
+  <pre>{
+  "model": "jev-latest",
+  "state": {"message": "Checkout has failed for most customers since 9:10."},
+  "questions": {
+    "team": {
+      "type": "choice",
+      "instructions": "Which team should own this issue?",
+      "criteria": {"technical": "outages and software failures", "billing": "settlement and invoices"}
+    },
+    "page_on_call": {
+      "type": "noul",
+      "instructions": "Should the on-call engineer be paged now?"
+    },
+    "impact": {
+      "type": "score",
+      "instructions": "How broad is the customer impact?",
+      "criteria": ["isolated", "some customers", "most customers"]
+    }
+  }
+}</pre>
+  <p>Jev returns one typed answer per question, including probabilities and confidence for Choice and Score. The response also includes token usage and the model version. Confidence is a signal, not a guarantee.</p>
+  <h2>Laya request</h2>
+  <p>Send <code>Content-Type: application/json</code>. The local model defaults to <code>typed-decisions</code>; use <code>english</code> to compare.</p>
+  <pre>{
   "model": "typed-decisions",
   "state": {"message": "I was charged twice. Please refund me."},
   "questions": {
@@ -19,4 +71,8 @@
       "criteria": ["low", "medium", "high"]
     }
   }
-}</pre><p><code>noul</code> remains P(true) in raw JSON. The UI compares yes and no, highlights the winner, and shows a tie at exactly 0.5. Custom false/true labels are respected. <code>choice</code> returns the selected option and distribution. <code>score</code> returns an expected zero-based rubric position.</p><p>Use 1–8 questions and 2–8 choice/score criteria. Invalid JSON, duplicate keys, invalid definitions, and inputs exceeding a model's token budget return 422. Requests above 256 KiB return 413; a busy model returns 429; an unavailable model returns 503. Inference times out after two minutes.</p><p>Open the request and response panel in the playground to see the full JSON with syntax highlighting.</p></body></html>
+}</pre>
+  <p>Laya's raw <code>noul</code> is P(true); the UI compares yes and no and highlights the winner. Scores use zero-based rubric levels. Use 2–8 choice or score criteria. Invalid JSON, duplicate keys, and invalid definitions return 422. Requests above 256 KiB return 413; a busy local model returns 429; an unavailable model returns 503.</p>
+  <p>Open the request and response panel in the playground to inspect the JSON with syntax highlighting.</p>
+</body>
+</html>
