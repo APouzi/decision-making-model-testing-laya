@@ -164,8 +164,8 @@
     "hint": "Edit the state or question definitions to explore how the answers change."
   },
   "temperature": {
-    "title": "Temperature balance",
-    "category": "Experiments",
+    "title": "Temperature balance (bad example)",
+    "category": "Experiments · known weak baseline",
     "state": {
       "room": {
         "current_temperature_c": 26,
@@ -198,7 +198,35 @@
         "instructions": "Is the current room temperature within the comfort range, including its boundaries?"
       }
     },
-    "hint": "Try changing only the current room temperature: 18°C calls for heating, 22°C for holding, and 26°C for cooling. Run each to compare Laya with the policy."
+    "hint": "Known bad example: this rigid numeric threshold task does not test tone or natural-language intent. Keep it as a weak baseline; compare it with Temperature requests to explore how Laya interprets what a person actually says."
+  },
+  "temperature_request": {
+    "title": "Temperature requests",
+    "category": "Experiments · natural-language intent",
+    "state": {
+      "room_request": "This place is like an icebox. Could you make it toasty in here?",
+      "temperature_request_policy": "Infer the speaker's intended indoor temperature change from the full message, including context, negation, casual American slang, idioms, indirect complaints, and equivalent new phrasings. These examples illustrate meaning; they are not a required-word list. If the speaker wants more warmth or says it feels too cool or cold, choose heating. This includes 'get this area toasty,' 'make it cozy,' 'warm it up,' 'heat it up,' 'turn it up,' 'I'm chilly/freezing,' 'it's nippy in here,' and 'this place is like an icebox.' If the speaker wants less warmth or says it feels too hot or warm, choose cooling. This includes 'cool it down,' 'turn it down,' 'turn the heat down,' 'turn on the AC,' 'I'm roasting/burning up,' 'it's sweltering/stuffy in here,' and 'this place is like an oven.' Interpret generic 'turn it up' as heating and 'turn it down' as cooling when they refer to the room temperature. Apply current preferences expressed by the speaker; do not treat quoted, hypothetical, clearly past, or third-party statements as a current request unless the speaker adopts them. A prohibition alone, such as 'don't turn the heat up,' does not by itself mean they want cooling. Choose hold when no temperature preference is expressed or the intent remains unclear. Follow a clear correction or latest preference; if the signals conflict without a clear resolution, choose hold. Decide from the full meaning, not isolated keywords."
+    },
+    "questions": {
+      "recommended_action": {
+        "type": "choice",
+        "instructions": "Using the full meaning and tone of `room_request` and the `temperature_request_policy`, what should we do with the room temperature?",
+        "criteria": {
+          "heating": "turn on heating to make the room warmer",
+          "cooling": "turn on cooling to make the room cooler",
+          "hold": "make no temperature change"
+        }
+      },
+      "wants_warmer": {
+        "type": "noul",
+        "instructions": "Does the speaker's full message express that they want the room to feel warmer?"
+      },
+      "wants_cooler": {
+        "type": "noul",
+        "instructions": "Does the speaker's full message express that they want the room to feel cooler?"
+      }
+    },
+    "hint": "Tone-focused example: change `room_request` to an idiom, casual complaint, indirect comment, negated request, or new phrasing. Run all three questions and see whether Laya follows the intended temperature change rather than matching a fixed list of words."
   },
   "phishing": {
     "title": "Phishing detection",

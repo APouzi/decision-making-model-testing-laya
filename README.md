@@ -1,6 +1,6 @@
 # Laya decision playground
 
-A **Svelte 5** UI and **Go** HTTP backend for Laya's native state + questions format. All 17 examples remain editable. The Go binary embeds the compiled UI and manages a private Python/PyTorch inference worker over stdin/stdout. Python does not expose an HTTP server.
+A **Svelte 5** UI and **Go** HTTP backend for Laya's native state + questions format. All 18 examples remain editable. The Go binary embeds the compiled UI and manages a private Python/PyTorch inference worker over stdin/stdout. Python does not expose an HTTP server.
 
 ## UI
 
@@ -93,7 +93,7 @@ Typed-Decisions specializes in customer service, invoices, security incidents, a
 
 This folder is one Git working tree for frontend, backend, and container configuration, initialized on `main`. On this machine, Git metadata lives at `%LOCALAPPDATA%\laya-decision-demo\git\decision_making_demo.git`, linked by the root `.git` file, because Windows blocks Git writes under Documents. Normal Git commands work from this project root. Keep that metadata directory when moving or backing up this working copy; model cleanup does not touch it.
 
-All **17 examples / 56 questions** are in `frontend/public/examples.json`, including the exact refund demo and temperature balance. Titles and hints are UI guidance; only the state and question definitions go to the model.
+All **18 examples / 59 questions** are in `frontend/public/examples.json`, including the exact refund demo, a marked weak temperature baseline, and a tone-focused temperature request example. Titles and hints are UI guidance; only the state and question definitions go to the model.
 
 - `frontend/src/App.svelte`: example picker, model selection, request lifecycle.
 - `frontend/src/DecisionCard.svelte`: native typed answers and winner highlighting.
