@@ -121,14 +121,14 @@
 
 <header class="topbar">
   <a class="brand" href="/" aria-label="Decision playground home"><img src="/icon.svg" width="34" height="34" alt="" /><span>decision<span class="brand-divider">/</span><span class="brand-caption">playground</span></span></a>
-  <nav class="provider-tabs" role="tablist" aria-label="Decision model">
-    <button id="tab-laya" type="button" role="tab" aria-selected={activeTab === 'laya'} aria-controls="provider-panel" class:active={activeTab === 'laya'} disabled={busy} onclick={() => selectTab('laya')}>Laya</button>
-    <button id="tab-jev" type="button" role="tab" aria-selected={activeTab === 'jev'} aria-controls="provider-panel" class:active={activeTab === 'jev'} disabled={busy} onclick={() => selectTab('jev')}>Jev</button>
-  </nav>
+  <div class="provider-tabs" role="group" aria-label="Decision model">
+    <button type="button" aria-pressed={activeTab === 'laya'} class:active={activeTab === 'laya'} disabled={busy} onclick={() => selectTab('laya')}>Laya</button>
+    <button type="button" aria-pressed={activeTab === 'jev'} class:active={activeTab === 'jev'} disabled={busy} onclick={() => selectTab('jev')}>Jev</button>
+  </div>
   <div class="connection" data-status={connectionStatus} role="status"><span class="status-dot"></span><span>{connectionLabel}</span></div>
 </header>
 
-<main id="provider-panel" role="tabpanel" aria-labelledby={'tab-' + activeTab}>
+<main>
   <div class="intro">
     <div><p class="eyebrow">ONE STATE. SEVERAL DECISIONS.</p><h1>{activeTab === 'jev' ? 'Make focused decisions.' : 'Make the next call.'}</h1><p class="lede">{#if activeTab === 'jev'}Give Jev one state and several focused questions.<br />Inspect typed answers, probabilities, and confidence.{:else}Give Laya structured context and typed questions.<br />Explore yes/no decisions, choices, and scores in one pass.{/if}</p></div>
     <div class="model-note">
